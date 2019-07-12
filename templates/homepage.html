@@ -1,0 +1,34 @@
+<head>
+	<title> Party Game </title>
+</head>
+
+<body>
+	<p> This is a paragraph </p>
+	<p> Current uptime: <span id="local_time"> 0 </span> </p>
+	<p> Current access time:<span id="local_time"> 0 </span></p>
+	
+	<script> 
+		var b = document.getElementById('local_time');
+		b.innerText = 'ascs'
+		var orig_load_time = Date.now();
+		
+		function update_time(){
+			b.innerText = Math.round((Date.now() - orig_load_time)/1000).toString()
+			setTimeout(update_time, 1000)
+		}
+		
+		console.log('{{site_url}}json_data')
+		function update_server_time(){
+			fetch('{{site_url}}json_data')
+			.then(function(response) {
+				return response.json();
+			})
+			.then(function(response_json) {
+				console.log(JSON.stringify(response_json));
+			});
+		}
+		
+		update_time();
+		update_server_time();
+	</script>
+</body>
