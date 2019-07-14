@@ -50,8 +50,8 @@ def handle_my_custom_event(json, string_data):
 
 @socketio.on('post_comment')
 def handle_my_custom_event(comment_data):
-	print('Comment posted: '+str(comment_data['data']))
-	socketio.emit('new_comment', str(comment_data['data']))
+	print('Comment posted: '+str(comment_data['message']))
+	socketio.emit('new_comment', comment_data)
 
 if __name__ == '__main__':
 	start_time = time.time()
