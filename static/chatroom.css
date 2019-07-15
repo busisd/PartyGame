@@ -1,6 +1,7 @@
 #chat_log {
-	width: 40%;
+	width: 100%;
 	border-spacing: 0px;
+	word-wrap: break-word;
 }
 
 table#chat_log tr:nth-child(even) {
@@ -13,4 +14,23 @@ table#chat_log tr:nth-child(odd) {
 
 .Username {
 	font-weight: bold;
+}
+
+#chat_log_div {
+	display: flex;
+	flex-direction: column-reverse;
+	height: 90%;
+	max-height: 90%;
+	width: 30%;
+	max-width: 30%;
+	word-wrap: break-word;
+	position: fixed;
+	overflow-y: auto;
+	
+	word-break: break-word;
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+
 }
