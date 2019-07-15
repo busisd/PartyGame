@@ -8,6 +8,7 @@
     });
 	</script>
 	<script type="text/javascript" src="{{ url_for('static', filename='chatroom.js') }}" defer></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chatroom.css') }}">
 </head>
 
 <body>
@@ -15,5 +16,5 @@
 	<input type="text" placeholder="Message" id="comment_box" autocomplete="off">
 	<input type="submit" value="Send" onclick="sendMessage()">
 	<br>
-	<div id="chat_log"> </div> 
+	<table id="chat_log"> </table> 
 </body>

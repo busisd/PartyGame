@@ -1,0 +1,16 @@
+#chat_log {
+	width: 40%;
+	border-spacing: 0px;
+}
+
+table#chat_log tr:nth-child(even) {
+	background-color: #EEFFEE;
+}
+
+table#chat_log tr:nth-child(odd) {
+	background-color: #DDEEDD;
+}
+
+.Username {
+	font-weight: bold;
+}
