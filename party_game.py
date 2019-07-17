@@ -36,6 +36,21 @@ def chatroom():
 		print('Form received', str(flask.request.form))
 		return 'Success'
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+	if flask.request.method == "POST":
+		return flask.redirect(flask.url_for('chatroom'))
+	else:
+		return flask.render_template('chat_login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+	return flask.render_template('chat_register.html')
+
+@app.route('/logout')
+def logout():
+	return 'log out'
+
 @socketio.on('message')
 def handle_message(message):
 	print('received message: ' + message)

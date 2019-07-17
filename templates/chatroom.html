@@ -1,3 +1,6 @@
+<!Doctype html>
+<html>
+
 <head>
 	<title> Chat Room </title>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
@@ -12,11 +15,14 @@
 </head>
 
 <body>
-	<input type="text" placeholder="Username" id="username_box" autocomplete="off">
-	<input type="text" placeholder="Message" id="comment_box" autocomplete="off">
-	<input type="submit" value="Send" onclick="sendMessage()">
-	<br>
+	<div id="top_bar">
+		<input type="text" placeholder="Username" id="username_box" autocomplete="off">
+		<input type="text" placeholder="Message" id="comment_box" autocomplete="off">
+		<input type="submit" value="Send" onclick="sendMessage()">
+	</div>
 	<div id="chat_log_div" >
 		<table id="chat_log"> </table> 
 	</div>
 </body>
+
+</html>

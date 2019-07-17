@@ -1,0 +1,25 @@
+<!Doctype html>
+<html>
+
+<head>
+	<title> Chat Room </title>
+</head>
+
+<body>
+	<p> Register new account: </p>
+	{% for message in get_flashed_messages(): %}
+		<p> {{ message }} </p>
+	{% endfor %}
+	<br>
+	<form method="post">
+		<label for="username"> New username: </label>
+		<input name="username" required> <br>
+		<label for="password"> New password: </label>
+		<input name="password" type="password" required> <br>
+		<label for="password_confirm"> Confirm password: </label>
+		<input name="password_confirm" type="password" required> <br>
+		<input type="submit" value="Register">
+	</form>
+</body>
+
+</html>

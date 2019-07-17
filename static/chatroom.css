@@ -1,3 +1,7 @@
+body {
+	margin: 0px;
+}
+
 #chat_log {
 	width: 100%;
 	border-spacing: 0px;
@@ -19,8 +23,8 @@ table#chat_log tr:nth-child(odd) {
 #chat_log_div {
 	display: flex;
 	flex-direction: column-reverse;
-	height: 90%;
-	max-height: 90%;
+	height: 85%;
+	max-height: 85%;
 	width: 30%;
 	max-width: 30%;
 	word-wrap: break-word;
@@ -32,5 +36,18 @@ table#chat_log tr:nth-child(odd) {
 	-moz-hyphens: auto;
 	-webkit-hyphens: auto;
 	hyphens: auto;
+	
+	background-color: #F9F9F9;
+	
+	border: 1px;
+	border-color: #E9E9E9;
+	border-style: solid;
+	margin: 1%;
+}
 
+#top_bar {
+	height: 10%;
+	padding: 0px;
+	
+	background-color: #F0F0FF;
 }
