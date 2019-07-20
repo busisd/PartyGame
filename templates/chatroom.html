@@ -16,16 +16,26 @@
 
 <body>
 	<div id="top_bar">
-		{% if g.cur_user %}
-		<span> {{ g.cur_user["Username"] }} </span> <br>
-		{% else %}
-		<span> Anonymous </span> <br>
-		{% endif %}
-		<input type="text" placeholder="Username" id="username_box" autocomplete="off">
-		<input type="text" placeholder="Message" id="comment_box" autocomplete="off">
-		<input type="submit" value="Send" onclick="sendMessage()">
+		<div>
+			<span style="font-weight: bold;"> User: </span>
+			{% if g.cur_user %}
+				<span> {{ g.cur_user["Username"] }} </span> <br>
+			{% else %}
+				<span> Anonymous </span> <br>
+			{% endif %}
+			<input type="text" placeholder="Message" id="comment_box" autocomplete="off">
+			<input type="submit" value="Send" onclick="sendMessage()">
+		</div>
+		<div style="float: right;">
+			{% if g.cur_user %}
+				<span> <a href="/logout">Log out</a> </span>
+			{% else %}
+				<span> <a href="/login">Log in</a> </span> <br>
+				<span> <a href="/register">Register</a> </span>
+			{% endif %}
+		</div>
 	</div>
-	<div id="chat_log_div" >
+	<div id="chat_log_div">
 		<table id="chat_log"> </table> 
 	</div>
 </body>

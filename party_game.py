@@ -122,11 +122,15 @@ def handle_my_custom_event(json, string_data):
 def handle_comment(comment_data):
 	print('Comment posted: '+str(comment_data['message']))
 	# print('Session ID:', flask.request.sid) #Session ID changes on page refresh
-	if (flask.session.get('test_var', None)) is None:
-		print('\n INITIATING TEST \n')
-		flask.session['test_var'] = 5
+	# print("\n"+str(flask.session.get('cur_user_id', "No user specified!"))+"\n") #Prints the current user id
+	cur_id = flask.session.get('cur_user_id', None)
+	if cur_id is not None:
+		db = get_db()
+		user = db.execute("SELECT * FROM user WHERE id = ?", (cur_id,)).fetchone()
+		username = user['username']
+		comment_data['username'] = username
 	else:
-		print('\n TEST_VAR IS:', flask.session['test_var'], '\n')
+		comment_data['username'] = "Anonymous"
 	socketio.emit('new_comment', comment_data)
 
 # def verify_user(username, password_hash):

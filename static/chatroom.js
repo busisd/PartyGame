@@ -1,4 +1,3 @@
-var username_box = document.getElementById("username_box")
 var comment_box = document.getElementById("comment_box")
 
 comment_box.addEventListener("keyup", function(event) {
@@ -9,7 +8,7 @@ comment_box.addEventListener("keyup", function(event) {
 
 function sendMessage() {
 	if (comment_box.value!==""){
-		socket.emit('post_comment', {username:username_box.value, message:comment_box.value});
+		socket.emit('post_comment', {message:comment_box.value});
 		comment_box.value="";
 	}
 }
