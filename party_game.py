@@ -2,22 +2,30 @@ import flask
 import time
 import json
 from flask_socketio import SocketIO
+import sqlite3
+from werkzeug.security import check_password_hash, generate_password_hash
+import sys, os
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 app = flask.Flask(__name__)
-app.config['SECRET-KEY'] = 'secretsecret'
+app.config.from_object('testsite_config')
 socketio = SocketIO(app)
 
+#db.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL);")
+def get_db():
+	if 'db' not in flask.g:
+		flask.g.db = sqlite3.connect('chat_db')
+		flask.g.db.row_factory = sqlite3.Row
+	return flask.g.db
+	
+def close_db(e = None):
+	db = flask.g.pop('db', None)
+	if db is not None:
+		db.close()
+app.teardown_appcontext(close_db)
+
+
 start_time = -999999
-
-users_in_game = []
-#make a page where people can register themselves into the game with a unique nickname
-#then have the server return diffferent pages at /game given the status of the participants in each section
-#also keep track of the 'ready' status of each user
-#if the majority of users are ready, then remaining users have 30 seconds to enter their answers or they 
-#are either kicked or get a default answers
-#might make more sense to just make a chatroom to get 2-way connection? then use that
-
-
 @app.route('/')
 def main_page():
 	uptime = round(time.time() - start_time)
@@ -39,17 +47,64 @@ def chatroom():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if flask.request.method == "POST":
-		return flask.redirect(flask.url_for('chatroom'))
+		username = flask.request.form.get('username', None)
+		password = flask.request.form.get('password', None)
+		
+		db = get_db()
+		cur_user = db.execute('SELECT * FROM user WHERE username = ?', (username,)).fetchone()
+		
+		error = None
+		if cur_user is None:
+			error = "Username does not exist!"
+		elif not check_password_hash(cur_user['password'], password):
+			error = "Incorrect password."
+		
+		if error is not None:
+			flask.flash(error)
+			return flask.render_template('chat_login.html')
+		else:
+			flask.session.clear()
+			flask.session['cur_user_id'] = cur_user['id']
+			return flask.redirect(flask.url_for('chatroom'))
 	else:
 		return flask.render_template('chat_login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-	return flask.render_template('chat_register.html')
+	if flask.request.method == "POST":
+		new_username = flask.request.form.get("username", None)
+		new_password = flask.request.form.get("password", None)
+		new_password_confirm = flask.request.form.get("password_confirm", None)
+		
+		db = get_db()
+		
+		error = None
+		if new_username is None or len(new_username) < 3:
+			error = "Username must be at least 3 letters long!"
+		elif new_password is None or len(new_password) < 6:
+			error = "Password must contain at least 6 characters!"
+		elif new_password != new_password_confirm:
+			error = "Password and confirmation did not match, please try again."
+		elif db.execute('SELECT id FROM user WHERE username = ?', (new_username,)).fetchone() is not None:
+			error = "An account with that username already exists. Please choose a different username."
+			
+		if error is not None:
+			flask.flash(error)
+			return flask.render_template('chat_register.html')
+		else:
+			db.execute(
+				'INSERT INTO user (username, password) VALUES (?,?)', 
+				(new_username, generate_password_hash(new_password))
+			)
+			db.commit()
+			return flask.redirect(flask.url_for('login'))
+	else:
+		return flask.render_template('chat_register.html')
 
 @app.route('/logout')
 def logout():
-	return 'log out'
+	flask.session.clear()
+	return flask.redirect(flask.url_for('chatroom'))
 
 @socketio.on('message')
 def handle_message(message):
@@ -61,12 +116,39 @@ def handle_json(json):
 
 @socketio.on('my event')
 def handle_my_custom_event(json, string_data):
-	print('received custom event: ' + str(json) + string_data)
+	print('received custom event:', str(json), string_data)
 
 @socketio.on('post_comment')
-def handle_my_custom_event(comment_data):
+def handle_comment(comment_data):
 	print('Comment posted: '+str(comment_data['message']))
+	# print('Session ID:', flask.request.sid) #Session ID changes on page refresh
+	if (flask.session.get('test_var', None)) is None:
+		print('\n INITIATING TEST \n')
+		flask.session['test_var'] = 5
+	else:
+		print('\n TEST_VAR IS:', flask.session['test_var'], '\n')
 	socketio.emit('new_comment', comment_data)
+
+# def verify_user(username, password_hash):
+	# '''
+	# This method is kind of bad because someone could be 
+	# impersonated using only their password hash
+	# '''
+	# db = get_db()
+	# user = db.execute("SELECT * FROM user WHERE username = ?", (username,)).fetchone()
+	# if user is None:
+		# return False
+	# return password_hash == user["password"]
+
+def pass_user():
+	cur_user_id = flask.session.get('cur_user_id', None)
+	if cur_user_id is None:
+		flask.g.cur_user = None
+	else:
+		db = get_db()
+		cur_user = db.execute('SELECT * FROM user WHERE id = ?', (cur_user_id,)).fetchone()
+		flask.g.cur_user = cur_user
+app.before_request(pass_user)
 
 if __name__ == '__main__':
 	start_time = time.time()

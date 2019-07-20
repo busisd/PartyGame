@@ -7,7 +7,7 @@
 	<script type="text/javascript" charset="utf-8">
     var socket = io();
     socket.on('connect', function() {
-        socket.emit('my event', {data: 'I\'m connected!'}, 'second thing');
+        socket.emit('my event', {data: 'I\'m connected!'}, 'Connection: on.');
     });
 	</script>
 	<script type="text/javascript" src="{{ url_for('static', filename='chatroom.js') }}" defer></script>
@@ -16,6 +16,11 @@
 
 <body>
 	<div id="top_bar">
+		{% if g.cur_user %}
+		<span> {{ g.cur_user["Username"] }} </span> <br>
+		{% else %}
+		<span> Anonymous </span> <br>
+		{% endif %}
 		<input type="text" placeholder="Username" id="username_box" autocomplete="off">
 		<input type="text" placeholder="Message" id="comment_box" autocomplete="off">
 		<input type="submit" value="Send" onclick="sendMessage()">
