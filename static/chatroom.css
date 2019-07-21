@@ -14,12 +14,16 @@ body {
 	word-wrap: break-word;
 }
 
-table#chat_log tr:nth-child(even) {
+table#chat_log tr.chatmessage:nth-child(even) {
 	background-color: #EEFFEE;
 }
 
-table#chat_log tr:nth-child(odd) {
+table#chat_log tr.chatmessage:nth-child(odd) {
 	background-color: #DDEEDD;
+}
+
+table#chat_log tr.newuser {
+	background-color: #DDDDDD;
 }
 
 .Username {

@@ -118,6 +118,17 @@ def handle_json(json):
 @socketio.on('my event')
 def handle_my_custom_event(json, string_data):
 	print('received custom event:', str(json), string_data)
+	
+@socketio.on('connection_event')
+def handle_connection_event():
+	cur_id = flask.session.get('cur_user_id', None)
+	username = "Anonymous"
+	if cur_id is not None:
+		db = get_db()
+		user = db.execute("SELECT * FROM user WHERE id = ?", (cur_id,)).fetchone()
+		username = user['username']
+	
+	socketio.emit('new_user_connected', username)
 
 @socketio.on('post_comment')
 def handle_comment(comment_data):
