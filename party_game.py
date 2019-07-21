@@ -28,9 +28,10 @@ app.teardown_appcontext(close_db)
 start_time = -999999
 @app.route('/')
 def main_page():
-	uptime = round(time.time() - start_time)
-	site_url = flask.request.base_url
-	return flask.render_template('homepage.html', uptime = uptime, site_url = site_url)
+	return flask.redirect(flask.url_for('chatroom'))
+	# uptime = round(time.time() - start_time)
+	# site_url = flask.request.base_url
+	# return flask.render_template('homepage.html', uptime = uptime, site_url = site_url)
 
 @app.route('/json_data')
 def json_data():
@@ -120,7 +121,7 @@ def handle_my_custom_event(json, string_data):
 
 @socketio.on('post_comment')
 def handle_comment(comment_data):
-	print('Comment posted: '+str(comment_data['message']))
+	# print('Comment posted: '+str(comment_data['message']))
 	# print('Session ID:', flask.request.sid) #Session ID changes on page refresh
 	# print("\n"+str(flask.session.get('cur_user_id', "No user specified!"))+"\n") #Prints the current user id
 	cur_id = flask.session.get('cur_user_id', None)
@@ -131,6 +132,10 @@ def handle_comment(comment_data):
 		comment_data['username'] = username
 	else:
 		comment_data['username'] = "Anonymous"
+		
+	if len(comment_data["message"]) > 500:
+		comment_data["message"] = comment_data["message"][0:500]
+	
 	socketio.emit('new_comment', comment_data)
 
 # def verify_user(username, password_hash):
@@ -157,6 +162,6 @@ app.before_request(pass_user)
 if __name__ == '__main__':
 	start_time = time.time()
 	# app.run(host='localhost', port=5555, threaded=True)
-	socketio.run(app, host='localhost', port=5555)
+	socketio.run(app, host='0.0.0.0', port=1203)
 
 
