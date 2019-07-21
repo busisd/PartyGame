@@ -162,6 +162,6 @@ app.before_request(pass_user)
 if __name__ == '__main__':
 	start_time = time.time()
 	# app.run(host='localhost', port=5555, threaded=True)
-	socketio.run(app, host='0.0.0.0', port=1203)
+	socketio.run(app, host='0.0.0.0', port=5555)
 
 
