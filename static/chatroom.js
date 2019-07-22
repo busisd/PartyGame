@@ -1,3 +1,9 @@
+var socket = io();
+socket.on('connect', function() {
+	socket.emit('connection_event');
+});
+
+
 var comment_box = document.getElementById("comment_box")
 
 comment_box.addEventListener("keyup", function(event) {
@@ -59,7 +65,7 @@ socket.on('new_comment', function(comment_data){
 	}
 });
 
-socket.on('new_user_connected', function(usernameText){
+socket.on('new_user_connected', function(userDict){
 	var shouldScroll = checkShouldScroll();	new_chat_row = document.createElement("tr");
 	new_chat_row.className = "newuser"
 	new_chat = document.createElement("td");
@@ -67,7 +73,7 @@ socket.on('new_user_connected', function(usernameText){
 	username.className = "Username";
 	message = document.createElement("span");
 	message.className = "Message";
-	username.innerText=usernameText;
+	username.innerText=userDict["username"];
 	message.innerText=" has connected!";
 	new_chat.appendChild(username);
 	new_chat.appendChild(message);
@@ -77,6 +83,17 @@ socket.on('new_user_connected', function(usernameText){
 	if (shouldScroll) {
 		updateScroll();
 	}
+	
+	console.log(userDict);
+	if (userDict['x_pos'] !== null && userDict['y_pos'] !== null) {
+		chat_map.children[0].children[userDict['x_pos']].children[userDict['y_pos']].style.backgroundImage = "url(static/stickman.png)";
+	}
 });
 
-
+chat_map = document.getElementById("chat_map");
+for (i=0; i<chat_map.children[0].children.length; i++){
+	for (j=0; j<chat_map.children[0].children[i].children.length; j++){
+		nums = [String(Math.random()*255), String(Math.random()*255), String(Math.random()*255)];
+		chat_map.children[0].children[i].children[j].style.backgroundColor="rgba("+nums[0]+","+nums[1]+","+nums[2]+", .2)";
+	}
+}

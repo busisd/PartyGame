@@ -1,4 +1,5 @@
 html, body {
+	min-height: 100% !important;
 	height: 100%;
 	width: 100%; 
 	margin: 0; 
@@ -6,6 +7,10 @@ html, body {
 
 body {
 	margin: 0px;
+}
+
+#main_page {
+	height: 85%;
 }
 
 #chat_log {
@@ -35,15 +40,11 @@ table#chat_log tr.newuser {
 }
 
 #chat_log_div {
-	display: flex;
-	flex-direction: column-reverse;
-	height: 85%;
-	max-height: 85%;
+	height: 83%;
+	max-height: 83%;
 	width: 30%;
 	max-width: 30%;
 	word-wrap: break-word;
-	position: fixed;
-	overflow-y: auto;
 	
 	word-break: break-word;
 	-ms-hyphens: auto;
@@ -57,11 +58,40 @@ table#chat_log tr.newuser {
 	border-color: #E9E9E9;
 	border-style: solid;
 	margin: 1%;
+	
+	display: inline-block;
+	position: fixed;
+}
+
+#chat_log_wrapper {
+	width:100%;
+	height:100%;
+	display:flex;
+	flex-direction:column-reverse;
+	overflow-y:auto;
 }
 
 #top_bar {
-	height: 9%;
+	height: 10%;
 	padding: .5%;
 	
 	background-color: #F0F0FF;
 }
+
+
+#chat_map_div {
+	height: 100%;
+	float: right;
+	width: 67%;
+	/* background-image: url(https://i.imgur.com/OkK8Dkh.jpg); */
+	background-image: url(Beach_Overview_Cropped2.jpg);
+	background-size: 100% 100%;
+}
+
+#chat_map {
+	height: 100%;
+	width: 100%;
+	text-align: center;
+	vertical-align: center;
+}
+

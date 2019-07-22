@@ -123,12 +123,38 @@ def handle_my_custom_event(json, string_data):
 def handle_connection_event():
 	cur_id = flask.session.get('cur_user_id', None)
 	username = "Anonymous"
+	x_pos = None
+	y_pos = None
 	if cur_id is not None:
 		db = get_db()
 		user = db.execute("SELECT * FROM user WHERE id = ?", (cur_id,)).fetchone()
 		username = user['username']
-	
-	socketio.emit('new_user_connected', username)
+		x_pos = user['x_pos']
+		y_pos = user['y_pos']
+		if x_pos is None or y_pos is None:
+			db.execute('UPDATE user SET x_pos=0, y_pos=0 WHERE id=?', (user['id'],))
+			x_pos = 0
+			y_pos = 0
+			db.commit()
+		
+	socketio.emit('new_user_connected', {'username': username, 'x_pos':x_pos, 'y_pos':y_pos })
+#maybe instead of this I should have a database with columns id, x_pos, and y_pos,
+#that keeps track of all character locations.
+#when someone connects all data in the table is passed to them,
+#drawing all the characters. (figuring out who's offline? to not draw them)
+#using a ping pong event, I can test for users who are offline, and if they are,
+#drop them and send an eraseCharacter message to all connected users.
+#(maybe people are dropped fromt he table after 1 min of inactivity?)
+#whenever someone moves, an event is sent that only deals with the relevant movement information
+#(maybe don't allow overlapping characters?)
+#also, when they move, any other position in that database with the corresponding ID is deleted 
+#and replaced with the new position.
+
+# vvv function below seems to sort of work, but slowly?
+# @socketio.on('disconnect')
+# def test_disconnect():
+    # print('\n\nClient disconnected\n\n')
+
 
 @socketio.on('post_comment')
 def handle_comment(comment_data):
