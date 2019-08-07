@@ -20,6 +20,20 @@
 			<input type="text" placeholder="Message" id="comment_box" autocomplete="off" maxlength=500>
 			<input type="submit" value="Send" onclick="sendMessage()">
 		</div>
+
+		{% if g.cur_user %}
+			<div>
+				<span> <button onClick = "moveStickman('left')"> Left </button> </span> <br>
+			</div>
+			<div>
+				<span> <button onClick = "moveStickman('up')"> Up </button> </span> <br>
+				<span> <button onClick = "moveStickman('down')"> Down </button> </span> <br>
+			</div>
+			<div>
+				<span> <button onClick = "moveStickman('right')"> Right </button> </span> <br>
+			</div>
+		{% endif %}
+		
 		<div style="float: right;">
 			{% if g.cur_user %}
 				<span> <a href="/logout">Log out</a> </span>
@@ -37,7 +51,7 @@
 		</div>
 		<div id="chat_map_div">
 			<table id="chat_map"> 
-				<tr> <td style="background-size: 100% 100%;"> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
+				<tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
 				<tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
 				<tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>
 				<tr> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> <td> </td> </tr>

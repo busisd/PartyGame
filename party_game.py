@@ -12,6 +12,7 @@ app.config.from_object('testsite_config')
 socketio = SocketIO(app)
 
 #db.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL);")
+#db.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, cur_row INTEGER, cur_col INTEGER);")
 def get_db():
 	if 'db' not in flask.g:
 		flask.g.db = sqlite3.connect('chat_db')
@@ -123,22 +124,22 @@ def handle_my_custom_event(json, string_data):
 def handle_connection_event():
 	cur_id = flask.session.get('cur_user_id', None)
 	username = "Anonymous"
-	x_pos = None
-	y_pos = None
+	cur_row = None
+	cur_col = None
 	if cur_id is not None:
 		db = get_db()
 		user = db.execute("SELECT * FROM user WHERE id = ?", (cur_id,)).fetchone()
 		username = user['username']
-		x_pos = user['x_pos']
-		y_pos = user['y_pos']
-		if x_pos is None or y_pos is None:
-			db.execute('UPDATE user SET x_pos=0, y_pos=0 WHERE id=?', (user['id'],))
-			x_pos = 0
-			y_pos = 0
+		cur_row = user['cur_row']
+		cur_col = user['cur_col']
+		if cur_row is None or cur_col is None:
+			db.execute('UPDATE user SET cur_row=0, cur_col=0 WHERE id=?', (user['id'],))
+			cur_row = 0
+			cur_col = 0
 			db.commit()
 		
-	socketio.emit('new_user_connected', {'username': username, 'x_pos':x_pos, 'y_pos':y_pos })
-#maybe instead of this I should have a database with columns id, x_pos, and y_pos,
+	socketio.emit('new_user_connected', {'username': username, 'cur_row':cur_row, 'cur_col':cur_col })
+#maybe instead of this I should have a database with columns id, cur_row, and cur_col,
 #that keeps track of all character locations.
 #when someone connects all data in the table is passed to them,
 #drawing all the characters. (figuring out who's offline? to not draw them)
@@ -167,12 +168,12 @@ def handle_comment(comment_data):
 		user = db.execute("SELECT * FROM user WHERE id = ?", (cur_id,)).fetchone()
 		username = user['username']
 		comment_data['username'] = username
-		comment_data['x_pos'] = user['x_pos']
-		comment_data['y_pos'] = user['y_pos']
+		comment_data['cur_row'] = user['cur_row']
+		comment_data['cur_col'] = user['cur_col']
 	else:
 		comment_data['username'] = "Anonymous"
-		comment_data['x_pos'] = None
-		comment_data['y_pos'] = None
+		comment_data['cur_row'] = None
+		comment_data['cur_col'] = None
 		
 	if len(comment_data["message"]) > 500:
 		comment_data["message"] = comment_data["message"][0:500]
@@ -189,6 +190,35 @@ def handle_comment(comment_data):
 	# if user is None:
 		# return False
 	# return password_hash == user["password"]
+
+@socketio.on('move_stickman')
+def handle_move_stickman(direction):
+	cur_id = flask.session.get('cur_user_id', None)
+	if cur_id is not None:
+		db = get_db()
+		user = db.execute("SELECT * FROM user WHERE id = ?", (cur_id,)).fetchone()
+		stickman_pos_dict = {'old_row': user['cur_row'], 'old_col': user['cur_col']}
+		
+		new_row = user['cur_row']
+		new_col = user['cur_col']
+		
+		if direction == 'up':
+			new_row -= 1
+		elif direction == 'down':
+			new_row += 1
+		elif direction == 'left':
+			new_col -= 1
+		elif direction == 'right':
+			new_col += 1
+		else:
+			return
+			
+		if new_row >= 0 and new_row < 5 and new_col >= 0 and new_col < 7:
+			db.execute('UPDATE user SET cur_row=?, cur_col=? WHERE id=?', (new_row, new_col, user['id']))
+			db.commit()
+			stickman_pos_dict['new_row'] = new_row
+			stickman_pos_dict['new_col'] = new_col
+			socketio.emit('stickman_moved', stickman_pos_dict)
 
 def pass_user():
 	cur_user_id = flask.session.get('cur_user_id', None)

@@ -64,7 +64,7 @@ socket.on('new_comment', function(comment_data){
 		updateScroll();
 	}
 	
-	if (comment_data['x_pos'] !== null && comment_data['y_pos'] !== null) {
+	if (comment_data['cur_row'] !== null && comment_data['cur_col'] !== null) {
 		popUpMessage(comment_data);
 	}
 });
@@ -88,8 +88,8 @@ socket.on('new_user_connected', function(userDict){
 		updateScroll();
 	}
 	
-	if (userDict['x_pos'] !== null && userDict['y_pos'] !== null) {
-		chat_map.children[0].children[userDict['x_pos']].children[userDict['y_pos']].style.backgroundImage = "url(static/stickman.png)";
+	if (userDict['cur_row'] !== null && userDict['cur_col'] !== null) {
+		draw_stickman(userDict['cur_row'], userDict['cur_col']);
 	}
 });
 
@@ -103,12 +103,30 @@ for (i=0; i<chat_map.children[0].children.length; i++){
 }
 
 function popUpMessage(comment_data){
-	chatter_div = document.getElementById("chat_map_"+comment_data["x_pos"].toString()+"_"+comment_data["y_pos"].toString());
+	console.log(comment_data);
+	chatter_div = document.getElementById("chat_map_"+comment_data["cur_row"].toString()+"_"+comment_data["cur_col"].toString());
 	var rect = chatter_div.getBoundingClientRect();
 	chat_box = document.createElement("div");
 	chat_box.className = "chat_box";
-	chat_box.style.top = (rect.top-50).toString()+"px";
-	chat_box.style.left = rect.right.toString()+"px";
+	chat_box.style.top = (rect.top-50+25).toString()+"px";
+	chat_box.style.left = (rect.right-25).toString()+"px";
 	chat_box.innerText = comment_data["message"];
 	document.body.appendChild(chat_box);
+}
+
+function moveStickman(direction){
+	socket.emit('move_stickman', direction);
+}
+
+socket.on('stickman_moved', function(stickman_pos_data) {
+	erase_stickman(stickman_pos_data['old_row'], stickman_pos_data['old_col']);
+	draw_stickman(stickman_pos_data['new_row'], stickman_pos_data['new_col']);
+});
+
+function draw_stickman(row, col) {
+	chat_map.children[0].children[row].children[col].style.backgroundImage = "url(static/stickman.png)";
+}
+
+function erase_stickman(row, col) {
+	chat_map.children[0].children[row].children[col].style.backgroundImage = "";
 }
