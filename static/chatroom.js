@@ -63,6 +63,10 @@ socket.on('new_comment', function(comment_data){
 	if (shouldScroll) {
 		updateScroll();
 	}
+	
+	if (comment_data['x_pos'] !== null && comment_data['y_pos'] !== null) {
+		popUpMessage(comment_data);
+	}
 });
 
 socket.on('new_user_connected', function(userDict){
@@ -84,7 +88,6 @@ socket.on('new_user_connected', function(userDict){
 		updateScroll();
 	}
 	
-	console.log(userDict);
 	if (userDict['x_pos'] !== null && userDict['y_pos'] !== null) {
 		chat_map.children[0].children[userDict['x_pos']].children[userDict['y_pos']].style.backgroundImage = "url(static/stickman.png)";
 	}
@@ -95,5 +98,17 @@ for (i=0; i<chat_map.children[0].children.length; i++){
 	for (j=0; j<chat_map.children[0].children[i].children.length; j++){
 		nums = [String(Math.random()*255), String(Math.random()*255), String(Math.random()*255)];
 		chat_map.children[0].children[i].children[j].style.backgroundColor="rgba("+nums[0]+","+nums[1]+","+nums[2]+", .2)";
+		chat_map.children[0].children[i].children[j].id = "chat_map_"+i.toString()+"_"+j.toString()
 	}
+}
+
+function popUpMessage(comment_data){
+	chatter_div = document.getElementById("chat_map_"+comment_data["x_pos"].toString()+"_"+comment_data["y_pos"].toString());
+	var rect = chatter_div.getBoundingClientRect();
+	chat_box = document.createElement("div");
+	chat_box.className = "chat_box";
+	chat_box.style.top = (rect.top-50).toString()+"px";
+	chat_box.style.left = rect.right.toString()+"px";
+	chat_box.innerText = comment_data["message"];
+	document.body.appendChild(chat_box);
 }

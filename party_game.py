@@ -167,8 +167,12 @@ def handle_comment(comment_data):
 		user = db.execute("SELECT * FROM user WHERE id = ?", (cur_id,)).fetchone()
 		username = user['username']
 		comment_data['username'] = username
+		comment_data['x_pos'] = user['x_pos']
+		comment_data['y_pos'] = user['y_pos']
 	else:
 		comment_data['username'] = "Anonymous"
+		comment_data['x_pos'] = None
+		comment_data['y_pos'] = None
 		
 	if len(comment_data["message"]) > 500:
 		comment_data["message"] = comment_data["message"][0:500]

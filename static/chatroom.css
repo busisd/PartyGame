@@ -95,3 +95,19 @@ table#chat_log tr.newuser {
 	vertical-align: center;
 }
 
+.chat_box {
+	position: absolute; 
+	background-color: rgba(245, 255, 245, 0.6);
+	width: 200px; 
+	height: 50px;
+	animation-name: fade-in;
+	animation-duration: 4s;
+	opacity: 0;
+}
+
+@keyframes fade-in {
+  0% {opacity: 0;}
+  10% {opacity: 1;}
+  90% {opacity: 1;}
+  100% {opacity: 0;}
+}
