@@ -215,10 +215,10 @@ def handle_move_stickman(direction):
 			
 		if new_row >= 0 and new_row < 5 and new_col >= 0 and new_col < 7:
 			db.execute('UPDATE user SET cur_row=?, cur_col=? WHERE id=?', (new_row, new_col, user['id']))
-			db.commit()
 			stickman_pos_dict['new_row'] = new_row
 			stickman_pos_dict['new_col'] = new_col
 			socketio.emit('stickman_moved', stickman_pos_dict)
+			db.commit()
 
 def pass_user():
 	cur_user_id = flask.session.get('cur_user_id', None)

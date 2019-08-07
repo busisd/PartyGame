@@ -106,12 +106,21 @@ function popUpMessage(comment_data){
 	console.log(comment_data);
 	chatter_div = document.getElementById("chat_map_"+comment_data["cur_row"].toString()+"_"+comment_data["cur_col"].toString());
 	var rect = chatter_div.getBoundingClientRect();
-	chat_box = document.createElement("div");
+	var chat_box = document.createElement("div");
+	var chat_par = document.createElement("p");
 	chat_box.className = "chat_box";
 	chat_box.style.top = (rect.top-50+25).toString()+"px";
 	chat_box.style.left = (rect.right-25).toString()+"px";
-	chat_box.innerText = comment_data["message"];
+	chat_par.innerText = comment_data["message"];
+	chat_par.style.overflowY = "hidden";
+	chat_par.style.maxHeight = "-webkit-fill-available";
+	chat_par.style.margin = "0px";
+	chat_box.appendChild(chat_par);
 	document.body.appendChild(chat_box);
+		
+	setTimeout(function() {
+		document.body.removeChild(chat_box);
+	}, 4200);
 }
 
 function moveStickman(direction){
