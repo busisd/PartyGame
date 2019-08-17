@@ -41,10 +41,7 @@ def json_data():
 @app.route('/chatroom', methods=('GET', 'POST'))
 def chatroom():
 	if flask.request.method=='GET':
-		return flask.render_template('chatroom.html')
-	elif flask.request.method=='POST':
-		print('Form received', str(flask.request.form))
-		return 'Success'
+		return flask.render_template('chatroom.html', all_stickmen_pos = json.dumps(all_stickmen_pos))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -137,8 +134,10 @@ def handle_connection_event():
 			cur_row = 0
 			cur_col = 0
 			db.commit()
+		all_stickmen_pos[cur_id] = (cur_row,cur_col)
 		
-	socketio.emit('new_user_connected', {'username': username, 'cur_row':cur_row, 'cur_col':cur_col })
+	socketio.emit('new_user_connected', {'username': username, 'cur_row':cur_row, 'cur_col':cur_col})\
+
 #maybe instead of this I should have a database with columns id, cur_row, and cur_col,
 #that keeps track of all character locations.
 #when someone connects all data in the table is passed to them,
@@ -191,6 +190,7 @@ def handle_comment(comment_data):
 		# return False
 	# return password_hash == user["password"]
 
+all_stickmen_pos = {}
 @socketio.on('move_stickman')
 def handle_move_stickman(direction):
 	cur_id = flask.session.get('cur_user_id', None)
@@ -219,6 +219,7 @@ def handle_move_stickman(direction):
 			stickman_pos_dict['new_col'] = new_col
 			socketio.emit('stickman_moved', stickman_pos_dict)
 			db.commit()
+			all_stickmen_pos[cur_id] = (new_row, new_col)
 
 def pass_user():
 	cur_user_id = flask.session.get('cur_user_id', None)

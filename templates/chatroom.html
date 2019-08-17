@@ -4,6 +4,9 @@
 <head>
 	<title> Chat Room </title>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		all_stickmen_pos = JSON.parse('{{all_stickmen_pos|safe}}');
+	</script>
 	<script type="text/javascript" src="{{ url_for('static', filename='chatroom.js') }}" defer></script>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chatroom.css') }}">
 </head>

@@ -96,8 +96,8 @@ socket.on('new_user_connected', function(userDict){
 chat_map = document.getElementById("chat_map");
 for (i=0; i<chat_map.children[0].children.length; i++){
 	for (j=0; j<chat_map.children[0].children[i].children.length; j++){
-		nums = [String(Math.random()*255), String(Math.random()*255), String(Math.random()*255)];
-		chat_map.children[0].children[i].children[j].style.backgroundColor="rgba("+nums[0]+","+nums[1]+","+nums[2]+", .2)";
+		// nums = [String(Math.random()*255), String(Math.random()*255), String(Math.random()*255)];
+		// chat_map.children[0].children[i].children[j].style.backgroundColor="rgba("+nums[0]+","+nums[1]+","+nums[2]+", .2)";
 		chat_map.children[0].children[i].children[j].id = "chat_map_"+i.toString()+"_"+j.toString()
 	}
 }
@@ -138,4 +138,9 @@ function draw_stickman(row, col) {
 
 function erase_stickman(row, col) {
 	chat_map.children[0].children[row].children[col].style.backgroundImage = "";
+}
+
+all_stickmen_pos_keys = Object.keys(all_stickmen_pos);
+for (i=0; i<all_stickmen_pos_keys.length; i++){
+	draw_stickman(all_stickmen_pos[all_stickmen_pos_keys[i]][0], all_stickmen_pos[all_stickmen_pos_keys[i]][1]);
 }
